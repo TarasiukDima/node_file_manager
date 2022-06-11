@@ -1,17 +1,21 @@
-import { EOL } from 'os';
 import { getCurrentPathMessage } from '../../utils/helpers.js';
 
 export const up = (currentDirectoryArr, rootDir) => {
   const newCurrentPathArr = [...currentDirectoryArr];
-  const errorText = 'UP operation failed' + EOL;
+  const errorText = 'UP operation failed!';
   const lastEll = newCurrentPathArr[newCurrentPathArr.length - 1];
-  if (
-    newCurrentPathArr.length <= 1
-    || rootDir.startsWith(lastEll)
-  ) {
-    process.stdout.write(errorText);
-  } else {
-    newCurrentPathArr.pop();
+
+  try {
+    if (
+      newCurrentPathArr.length <= 1
+      || rootDir.startsWith(lastEll)
+    ) {
+      throw new Error(errorText);
+    } else {
+      newCurrentPathArr.pop();
+    }
+  } catch (error) {
+    console.log(error.message);
   }
 
   const currentDirectoryMessage = getCurrentPathMessage(newCurrentPathArr);

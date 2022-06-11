@@ -23,7 +23,7 @@ export const osApp = (args) => {
       break;
     }
     default: {
-      console.log('OS operation failed. Not correct args!');
+      throw new Error('OS operation failed. Not correct args!');
     }
   }
 }

@@ -85,16 +85,13 @@ export const replaceQuotes = (str) => {
 
 
 export const validatePath = (str, rootDir) => {
-  const strWithoutDash = str.replaceAll('/', sep);
+  const strWithoutDash = str.replaceAll(/\/|\\/g, sep);
   const arrPath = strWithoutDash.split(sep);
   const newArrNotEmptyEl = arrPath.filter((pathEl) => pathEl.length);
 
   if (!newArrNotEmptyEl.length) return;
-
-  console.log(newArrNotEmptyEl, sep);
   if (!rootDir.startsWith(newArrNotEmptyEl[0])) {
     newArrNotEmptyEl.unshift(rootDir);
   }
-  console.log('newStr', newArrNotEmptyEl);
   return newArrNotEmptyEl.join(sep);
 };

@@ -24,7 +24,11 @@ const fileManagerTask = () => {
   process.stdout.write(entryMessage);
 
   lineRead.on('line', async (input) => {
-    actuallyPathArr = await doCommand({ input, lineRead, currentDirectoryArr: actuallyPathArr, sep, rootDir });
+    try {
+      actuallyPathArr = await doCommand({ input, lineRead, currentDirectoryArr: actuallyPathArr, sep, rootDir });
+    } catch (error) {
+      console.log(error.message);
+    }
   });
 
   lineRead.on('SIGINT', () => lineRead.close());
