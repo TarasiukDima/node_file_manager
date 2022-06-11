@@ -1,4 +1,5 @@
 import { isAbsolute, join } from 'path';
+import { FILE_VARIANT } from '../../settings/index.js';
 import {
   getCurrentPathMessage,
   isFileOrFolder,
@@ -31,7 +32,7 @@ export const cd = async ({ currentDirectoryArr, rootDir, args, sep }) => {
 
     const isFileOrFolderExist = await isFileOrFolder(folderPath);
 
-    if (!isFileOrFolderExist || isFileOrFolderExist.data === 'file') {
+    if (!isFileOrFolderExist || isFileOrFolderExist.data === FILE_VARIANT) {
       throw new Error(errorText);
     }
 

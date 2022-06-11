@@ -2,6 +2,7 @@ import fsPromises from 'fs/promises';
 import os from 'os';
 import { fileURLToPath } from "url";
 import { dirname, sep, parse, join } from "path";
+import { FILE_VARIANT, FOLDER_VARIANT, USER_NAME_ARG } from '../settings/index.js';
 
 export const isExistFileOrFolder = async (folderPath) => {
   try {
@@ -16,9 +17,9 @@ export const isFileOrFolder = async (folderPath) => {
   try {
     const stats = await fsPromises.stat(folderPath);
     if (stats.isFile()) {
-      return {data: 'file'}
+      return { data: FILE_VARIANT }
     } else {
-      return {data: 'folder'}
+      return { data: FOLDER_VARIANT }
     }
   } catch {
     return false;
@@ -55,12 +56,11 @@ export function getCurrentPathMessage(pathArr) {
 
 export const getUserName = (args) => {
   const argsArray = args.slice(2);
-  const startUserArgString = '--username=';
   const userName = [];
 
   argsArray.forEach((arg) => {
-    if (arg.startsWith(startUserArgString)) {
-      userName.push(arg.slice(startUserArgString.length));
+    if (arg.startsWith(USER_NAME_ARG)) {
+      userName.push(arg.slice(USER_NAME_ARG.length));
     } else {
       userName.push(arg);
     }
@@ -85,7 +85,7 @@ export const replaceQuotes = (str) => {
 
 
 export const validatePath = (str, rootDir) => {
-  const strWithoutDash = str.replaceAll(/\/|\\/g, sep);
+  const strWithoutDash = str.replaceAll(/\/|\\|\|/g, sep);
   const arrPath = strWithoutDash.split(sep);
   const newArrNotEmptyEl = arrPath.filter((pathEl) => pathEl.length);
 

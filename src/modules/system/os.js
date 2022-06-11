@@ -1,7 +1,7 @@
 import os from 'os';
 
 export const osApp = (args) => {
-  switch (args[0]) {
+  switch (args[0].trim()) {
     case "--EOL": {
       console.log(JSON.stringify(os.EOL));
       break;

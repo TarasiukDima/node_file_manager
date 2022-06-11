@@ -55,7 +55,7 @@ export const doCommand = async ({
       break;
     }
     case 'hash': {
-      hash();
+      hash({currentDirectoryArr: newCurrentPathArr, rootDir, args});
       break;
     }
     case 'compress': {
