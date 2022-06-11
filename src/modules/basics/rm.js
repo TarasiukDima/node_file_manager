@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-export const remove = async () => {
+export const rm = async () => {
   const removeFile = path.join(__dirname, 'files', 'fileToRemove.txt');
   const errorText = 'FS remove operation failed';
 
@@ -17,5 +17,3 @@ export const remove = async () => {
     console.log(error.message);
   }
 };
-
-remove();

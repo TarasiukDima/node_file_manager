@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-export const read = async () => {
+export const cat = async () => {
   const filePath = path.join(__dirname, 'files', 'fileToRead.txt');
   const errorText = 'Read operation failed';
 
@@ -20,5 +20,3 @@ export const read = async () => {
     console.log(error.message);
   }
 };
-
-read();

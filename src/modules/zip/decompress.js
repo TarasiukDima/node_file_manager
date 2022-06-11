@@ -31,5 +31,3 @@ export const decompress = async () => {
     console.log(error.message);
   }
 };
-
-decompress();

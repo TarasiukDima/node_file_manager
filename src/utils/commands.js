@@ -1,58 +1,69 @@
-export const doCommand = (input, lineRead) => {
+import { add, cat, cd, compress, cp, decompress, hash, ls, mv, os, rm, rn, up } from "../modules/index.js";
+
+export const doCommand = async ({
+  input,
+  lineRead,
+  currentDirectoryArr,
+  sep,
+  rootDir
+}) => {
   const invalidInput = 'Invalid input\n';
   const [command, ...args] = input.trim().split(' ');
+  let newCurrentPathArr = [...currentDirectoryArr];
 
   switch (command) {
     case 'up': {
-      process.stdout.write('up');
+      newCurrentPathArr = up(newCurrentPathArr, rootDir);
       break;
     }
     case 'cd': {
-      process.stdout.write('cd');
+      newCurrentPathArr = (args[0] === '..')
+        ? up(newCurrentPathArr, rootDir)
+        : await cd({currentDirectoryArr: newCurrentPathArr, rootDir, args, sep});
       break;
     }
     case 'ls': {
-      process.stdout.write('ls');
+      ls(newCurrentPathArr, rootDir);
       break;
     }
     case 'cat': {
-      process.stdout.write('cat');
+      cat();
       break;
     }
     case 'add': {
-      process.stdout.write('add');
+      add();
       break;
     }
     case 'rn': {
-      process.stdout.write('rn');
+      rn();
       break;
     }
     case 'cp': {
-      process.stdout.write('cp');
+      cp();
       break;
     }
     case 'mv': {
-      process.stdout.write('mv');
+      mv();
       break;
     }
     case 'rm': {
-      process.stdout.write('rm');
+      rm();
       break;
     }
     case 'os': {
-      process.stdout.write('os');
+      os(args);
       break;
     }
     case 'hash': {
-      process.stdout.write('hash');
+      hash();
       break;
     }
     case 'compress': {
-      process.stdout.write('compress');
+      compress();
       break;
     }
     case 'decompress': {
-      process.stdout.write('decompress');
+      decompress();
       break;
     }
     case 'exit':
@@ -64,4 +75,6 @@ export const doCommand = (input, lineRead) => {
       process.stdout.write(invalidInput);
     }
   }
+
+  return newCurrentPathArr;
 }

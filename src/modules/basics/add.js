@@ -1,11 +1,11 @@
 import fs from 'fs';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { isExistFileOrFolder } from '../utils/helpers.js';
+import { isExistFileOrFolder } from '../../utils/helpers.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-export const create = async () => {
+export const add = async () => {
   const newFilePath = path.join(__dirname, 'files', 'fresh.txt');
   const content = 'I am fresh and young';
   const errorText = 'FS create operation failed';
@@ -25,5 +25,3 @@ export const create = async () => {
     console.log(error.message);
   }
 };
-
-create();

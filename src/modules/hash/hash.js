@@ -5,7 +5,7 @@ import crypto from 'crypto';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-export const calculateHash = async () => {
+export const hash = async () => {
   const filePath = path.join(__dirname, 'files', 'fileToCalculateHashFor.txt');
   const errorText = 'Hash operation failed';
 
@@ -22,5 +22,3 @@ export const calculateHash = async () => {
     console.log(error.message);
   }
 };
-
-calculateHash();

@@ -1,11 +1,11 @@
 import fs from 'fs';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { isExistFileOrFolder } from '../utils/helpers.js';
+import { isExistFileOrFolder } from '../../utils/helpers.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-export const rename = async () => {
+export const rn = async () => {
   const fileBadName = path.join(__dirname, 'files', 'wrongFilename.txt');
   const fileGoodName = path.join(__dirname, 'files', 'properFilename.md');
   const errorText = 'FS rename operation failed';
@@ -22,5 +22,3 @@ export const rename = async () => {
     console.log(error.message);
   }
 };
-
-rename();

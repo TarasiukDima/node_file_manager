@@ -3,7 +3,7 @@ import zlib from 'zlib';
 import { pipeline } from 'stream';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { isExistFileOrFolder } from '../utils/helpers.js';
+import { isExistFileOrFolder } from '../../utils/helpers.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -31,5 +31,3 @@ export const compress = async () => {
     console.log(error.message);
   }
 };
-
-compress();
