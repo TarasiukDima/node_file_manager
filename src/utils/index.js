@@ -4,6 +4,7 @@ export {
   getUserName,
   replaceQuotes,
   parseArgsString,
+  checkDoublePaths,
 } from './helpers.js';
 
 export {
@@ -25,4 +26,5 @@ export {
   getFailOperationEmptyFileMessage,
   getFailDecompressExtMessage,
   getFailExtensionFileMessage,
+  getFailDoublePathsMessage,
 } from './messages.js';

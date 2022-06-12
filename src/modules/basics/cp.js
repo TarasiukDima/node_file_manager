@@ -1,69 +1,60 @@
-import fs from 'fs';
-import fsPromises from 'fs/promises';
-import path, { dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { createReadStream, createWriteStream } from 'fs';
+import { pipeline } from 'stream';
+import { join, parse } from 'path';
+import {
+  isFileOrFolderExist,
+  checkDoublePaths,
+  getCurrentPathMessage,
+  getEmptyPathMessage,
+  getFailOperationMessage,
+  getNeedPathStr,
+  getFailDoublePathsMessage,
+} from '../../utils/index.js';
+import { FILE_VARIANT, FOLDER_VARIANT } from '../../settings/index.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const copyDir = (folderPath, newFolderPath) => {
-  fsPromises.mkdir(newFolderPath, { recursive: true })
-    .then(() => {
-      readFolderCopyFiles(folderPath, newFolderPath);
-    })
-    .catch((_) => {
-      throw new Error(errorText);
-    });
-};
 
-const readFolderCopyFiles = (folderPath, newFolderPath) => {
-  fsPromises.readdir(folderPath, { withFileTypes: true })
-    .then((filesList) => {
-      copyFiles(filesList, folderPath, newFolderPath);
-    })
-    .catch((_) => {
-      throw new Error(errorText);
-    });
-};
-
-const copyFiles = (filesList, folderPath, newFolderPath) => {
-  if (!filesList) return;
-
-  filesList.forEach(oneFile => {
-    if (oneFile.isFile()) {
-      fs.copyFile(
-        path.join(folderPath, oneFile.name),
-        path.join(newFolderPath, oneFile.name),
-        () => { }
-      );
-    } else {
-      const innerFolderPath = path.join(folderPath, oneFile.name);
-      const innerCopyFolderPath = path.join(newFolderPath, oneFile.name);
-
-      fsPromises.mkdir(innerCopyFolderPath, { recursive: true })
-        .then(() => {
-          readFolderCopyFiles(innerFolderPath, innerCopyFolderPath);
-        })
-        .catch((_) => {
-          throw new Error(errorText);
-        });
+export const cp = async ({ currentDirectoryArr, rootDir, args }) => {
+  try {
+    if (args.length < 2) {
+      throw new Error(getEmptyPathMessage('Copy'));
     }
-  });
-};
 
-export const cp = async () => {
-  // const folderPath = path.join(__dirname, 'files');
-  // const newFolderPath = path.join(__dirname, 'files_copy');
-  // const errorText = 'FS copy operation failed';
-  // const hasFilesFolder = await isExistFileOrFolder(folderPath);
-  // const hasCopyFilesFolder = await isExistFileOrFolder(newFolderPath);
+    const pathFileForCopy = getNeedPathStr(currentDirectoryArr, rootDir, args[0]);
+    const pathFolderForCopy = getNeedPathStr(currentDirectoryArr, rootDir, args[1]);
 
-  // try {
-  //   if (hasFilesFolder && !hasCopyFilesFolder) {
-  //     copyDir(folderPath, newFolderPath)
-  //   } else {
-  //     throw new Error(errorText);
-  //   }
-  // } catch (error) {
-  //   console.log(error.message);
-  // }
+    if (!pathFileForCopy || !pathFolderForCopy) {
+      throw new Error(getFailOperationMessage('Copy'));
+    }
+
+    const isFileExist = await isFileOrFolderExist(pathFileForCopy, FILE_VARIANT);
+    const isFolderExist = await isFileOrFolderExist(pathFolderForCopy, FOLDER_VARIANT);
+
+    if (!isFileExist || !isFolderExist) {
+      throw new Error(getFailOperationMessage('Copy'));
+    }
+
+    const {base, dir} = parse(pathFileForCopy);
+
+    if (checkDoublePaths(dir, pathFolderForCopy)) {
+      throw new Error(getFailDoublePathsMessage('Copy'));
+    }
+
+    const readStream = createReadStream(pathFileForCopy);
+    const fullPathForNewFile = join(pathFolderForCopy, base);
+    const writeStream = createWriteStream(fullPathForNewFile);
+
+    pipeline(readStream, writeStream, (err) => {
+      if (err) {
+        throw new Error(getFailOperationMessage('Copy'));
+      }
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+
+
+  process.stdout.write(
+    getCurrentPathMessage(currentDirectoryArr)
+  );
 };

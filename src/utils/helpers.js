@@ -1,5 +1,6 @@
 
 import { USER_NAME_ARG } from '../settings/index.js';
+import { sep } from "path";
 
 export const getUserName = (args) => {
   const argsArray = args.slice(2);
@@ -45,4 +46,20 @@ export const parseArgsString = (input) => {
   }
 
   return [command, argsStr.split(' ')];
+};
+
+const clearSepPathArr = (arr) => {
+  const newArr = arr.filter((str) => {
+    if (str !== sep && str.length) {
+      return str;
+    }
+  })
+
+  return newArr.length
+}
+export const checkDoublePaths = (path1, path2) => {
+  const arr1 = path1.split(path2);
+  const arr2 = path2.split(path1);
+
+  return (!clearSepPathArr(arr1) || !clearSepPathArr(arr2));
 };

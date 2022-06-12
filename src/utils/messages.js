@@ -41,3 +41,7 @@ export const getFailExtensionFileMessage = () => {
   return 'Add operation failed. Files must contain extension.';
 }
 
+export const getFailDoublePathsMessage = (operationName) => {
+  return `${operationName} operation failed. Need different paths.`;
+}
+
