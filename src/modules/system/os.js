@@ -1,6 +1,25 @@
 import os from 'os';
 import { getCurrentPathMessage } from '../../utils/index.js';
 
+const returnChz = (speed) => {
+  let newSpeed = speed;
+  while (newSpeed > 10) {
+    newSpeed = newSpeed / 10;
+  }
+
+  return Math.floor(newSpeed);
+}
+
+const showCPUS = () => {
+  const showCpusInfo = os.cpus().map(({ model, speed }) => {
+    return {
+      model,
+      speed_GHz: returnChz(speed),
+    };
+  })
+  console.table(showCpusInfo);
+}
+
 export const osApp = (currentDirectoryArr, args) => {
   switch (args[0].trim()) {
     case "--EOL": {
@@ -8,7 +27,7 @@ export const osApp = (currentDirectoryArr, args) => {
       break;
     }
     case "--cpus": {
-      console.log(os.cpus());
+      showCPUS();
       break;
     }
     case "--homedir": {
