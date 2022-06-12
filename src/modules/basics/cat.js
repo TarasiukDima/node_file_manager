@@ -1,12 +1,12 @@
 import { createReadStream } from 'fs';
 import { EOL } from 'os';
-import { FILE_VARIANT } from '../../settings/index.js';
 import {
   getCurrentPathMessage,
   getFailOperationMessage,
   getNeedPathStr,
   isFileOrFolderExist,
 } from '../../utils/index.js';
+import { FILE_VARIANT } from '../../settings/index.js';
 
 const readStreamOurFile = async (pathFile) => {
   return await new Promise((res, rej) => {

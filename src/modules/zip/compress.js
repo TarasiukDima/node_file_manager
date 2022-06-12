@@ -1,11 +1,5 @@
-import {
-  createReadStream,
-  createWriteStream,
-} from 'fs';
-import {
-  join,
-  parse,
-} from 'path';
+import { createReadStream, createWriteStream } from 'fs';
+import { join, parse } from 'path';
 import { createBrotliCompress } from 'zlib';
 import { pipeline } from 'stream';
 import {
@@ -15,10 +9,7 @@ import {
   getNeedPathStr,
   isFileOrFolderExist,
 } from '../../utils/index.js';
-import {
-  FILE_VARIANT,
-  FOLDER_VARIANT,
-} from '../../settings/index.js';
+import { FILE_VARIANT, FOLDER_VARIANT } from '../../settings/index.js';
 
 
 export const compress = async ({ currentDirectoryArr, rootDir, args }) => {

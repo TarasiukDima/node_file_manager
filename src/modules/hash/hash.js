@@ -45,7 +45,7 @@ export const hash = async ({ currentDirectoryArr, rootDir, args }) => {
 
     const isFileExist = await isFileOrFolderExist(fileForHashPathStr, FILE_VARIANT);
 
-    if ( !isFileExist ) {
+    if (!isFileExist) {
       throw new Error(getFailOperationMessage('Hash'));
     }
 

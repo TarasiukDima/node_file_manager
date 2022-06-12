@@ -34,7 +34,7 @@ export const mv = async ({ currentDirectoryArr, rootDir, args }) => {
       throw new Error(getFailOperationMessage('Move'));
     }
 
-    const {base, dir} = parse(pathFileForCopy);
+    const { base, dir } = parse(pathFileForCopy);
 
     if (checkDoublePaths(dir, pathFolderForCopy)) {
       throw new Error(getFailDoublePathsMessage('Move'));

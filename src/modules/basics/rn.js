@@ -1,5 +1,4 @@
 import { rename } from 'fs';
-import { FILE_VARIANT } from '../../settings/index.js';
 import {
   getCurrentPathMessage,
   getEmptyPathMessage,
@@ -7,6 +6,7 @@ import {
   getNeedPathStr,
   isFileOrFolderExist,
 } from '../../utils/index.js';
+import { FILE_VARIANT } from '../../settings/index.js';
 
 export const rn = async ({ currentDirectoryArr, rootDir, args }) => {
   try {
