@@ -1,18 +1,17 @@
 import readline from 'readline';
-import os from 'os';
 import {
-  getUserName,
+  doCommand,
+  getCurrentPathMessage,
+  getEndMessage,
   getStartDir,
-  getCurrentPathMessage
-} from './utils/helpers.js';
-import { doCommand } from './utils/commands.js';
+  getStartMessage,
+  getUserName,
+} from './utils/index.js';
 
 
 const fileManagerTask = () => {
   const userName = getUserName(process.argv) || 'anonym';
-  const welcomeMessage = `Welcome to the File Manager, ${userName}!${os.EOL}`;
-  const {currentDirectoryArr, sep, rootDir} = getStartDir(import.meta.url);
-  const entryMessage = welcomeMessage + getCurrentPathMessage(currentDirectoryArr);
+  const { currentDirectoryArr, sep, rootDir } = getStartDir(import.meta.url);
   let actuallyPathArr = [...currentDirectoryArr]
 
   const lineRead = readline.createInterface({
@@ -21,7 +20,8 @@ const fileManagerTask = () => {
     prompt: '',
   });
 
-  process.stdout.write(entryMessage);
+  process.stdout.write(getStartMessage(userName));
+  process.stdout.write(getCurrentPathMessage(currentDirectoryArr));
 
   lineRead.on('line', async (input) => {
     try {
@@ -34,7 +34,7 @@ const fileManagerTask = () => {
   lineRead.on('SIGINT', () => lineRead.close());
 
   lineRead.on('close', () => {
-    process.stdout.write(`Thank you for using File Manager, ${userName}!${os.EOL}`);
+    process.stdout.write(getEndMessage(userName));
   });
 }
 

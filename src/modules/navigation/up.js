@@ -1,8 +1,10 @@
-import { getCurrentPathMessage } from '../../utils/helpers.js';
+import {
+  getCurrentPathMessage,
+  getFailOperationMessage,
+} from '../../utils/index.js';
 
-export const up = (currentDirectoryArr, rootDir) => {
+export const up = (currentDirectoryArr, rootDir, errOperationName) => {
   const newCurrentPathArr = [...currentDirectoryArr];
-  const errorText = 'UP operation failed!';
   const lastEll = newCurrentPathArr[newCurrentPathArr.length - 1];
 
   try {
@@ -10,7 +12,7 @@ export const up = (currentDirectoryArr, rootDir) => {
       newCurrentPathArr.length <= 1
       || rootDir.startsWith(lastEll)
     ) {
-      throw new Error(errorText);
+      throw new Error(getFailOperationMessage(errOperationName));
     } else {
       newCurrentPathArr.pop();
     }
@@ -18,7 +20,8 @@ export const up = (currentDirectoryArr, rootDir) => {
     console.log(error.message);
   }
 
-  const currentDirectoryMessage = getCurrentPathMessage(newCurrentPathArr);
-  process.stdout.write(currentDirectoryMessage);
+  process.stdout.write(
+    getCurrentPathMessage(newCurrentPathArr)
+  );
   return newCurrentPathArr;
 }

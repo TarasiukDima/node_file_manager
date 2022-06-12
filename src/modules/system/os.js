@@ -1,6 +1,7 @@
 import os from 'os';
+import { getCurrentPathMessage } from '../../utils/index.js';
 
-export const osApp = (args) => {
+export const osApp = (currentDirectoryArr, args) => {
   switch (args[0].trim()) {
     case "--EOL": {
       console.log(JSON.stringify(os.EOL));
@@ -26,4 +27,8 @@ export const osApp = (args) => {
       throw new Error('OS operation failed. Not correct args!');
     }
   }
+
+  process.stdout.write(
+    getCurrentPathMessage(currentDirectoryArr)
+  );
 }

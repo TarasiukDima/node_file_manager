@@ -1,33 +1,68 @@
-import fs from 'fs';
-import zlib from 'zlib';
+import {
+  createReadStream,
+  createWriteStream,
+} from 'fs';
+import {
+  join,
+  parse,
+} from 'path';
+import { createBrotliDecompress } from 'zlib';
 import { pipeline } from 'stream';
-import path, { dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { isExistFileOrFolder } from '../../utils/helpers.js';
+import {
+  getCurrentPathMessage,
+  getEmptyPathMessage,
+  getFailDecompressExtMessage,
+  getFailOperationMessage,
+  getNeedPathStr,
+  isFileOrFolderExist,
+} from '../../utils/index.js';
+import {
+  FILE_VARIANT,
+  FOLDER_VARIANT,
+} from '../../settings/index.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
-export const decompress = async () => {
-  const zipFilePath = path.join(__dirname, 'files', 'fileToCompress.txt.gz');
-  const unzipFilePath = path.join(__dirname, 'files', 'fileToCompress.txt');
-  const errorText = 'Unzip operation failed';
-  const hasFile = await isExistFileOrFolder(zipFilePath);
-
+export const decompress = async ({ currentDirectoryArr, rootDir, args }) => {
   try {
-    if (hasFile) {
-      const zipReadStream = fs.createReadStream(zipFilePath);
-      const unzipWriteStream = fs.createWriteStream(unzipFilePath);
-      const unzip = zlib.createGunzip();
-
-      pipeline(zipReadStream, unzip, unzipWriteStream, (err) => {
-        if (err) {
-          throw new Error(errorText);
-        }
-      });
-    } else {
-      throw new Error(errorText);
+    if (!args.length) {
+      throw new Error(getEmptyPathMessage('Decompress'));
     }
+
+    const pathZipFile = getNeedPathStr(currentDirectoryArr, rootDir, args[0]);
+    const pathFolderForUnzip = getNeedPathStr(currentDirectoryArr, rootDir, args[1]);
+
+    if (!pathFolderForUnzip || !pathZipFile) {
+      throw new Error(getFailOperationMessage('Decompress'));
+    }
+
+    const isFileExist = await isFileOrFolderExist(pathZipFile, FILE_VARIANT);
+    const isFolderExist = await isFileOrFolderExist(pathFolderForUnzip, FOLDER_VARIANT);
+
+    if (!isFileExist || !isFolderExist) {
+      throw new Error(getFailOperationMessage('Decompress'));
+    }
+
+    const { name, ext } = parse(pathZipFile);
+
+    if (ext !== '.br') {
+      throw new Error(getFailDecompressExtMessage('Decompress'));
+    }
+
+    const zipFile = createReadStream(pathZipFile);
+    const fullPathForUnzip = join(pathFolderForUnzip, name);
+    const fileForUnzip = createWriteStream(fullPathForUnzip);
+    const brotliDecompress = createBrotliDecompress();
+
+    pipeline(zipFile, brotliDecompress, fileForUnzip, (err) => {
+      if (err) {
+        throw new Error(getFailOperationMessage('Decompress'));
+      }
+    });
   } catch (error) {
     console.log(error.message);
   }
+
+  process.stdout.write(
+    getCurrentPathMessage(currentDirectoryArr)
+  );
 };

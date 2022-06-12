@@ -1,39 +1,31 @@
-import { isAbsolute, join } from 'path';
-import { FILE_VARIANT } from '../../settings/index.js';
+import { FOLDER_VARIANT } from '../../settings/index.js';
 import {
+  isFileOrFolderExist,
   getCurrentPathMessage,
-  isFileOrFolder,
-  replaceQuotes,
-  validatePath
-} from '../../utils/helpers.js';
+  getEmptyPathMessage,
+  getFailOperationMessage,
+  getNeedPathStr,
+} from '../../utils/index.js';
 
 export const cd = async ({ currentDirectoryArr, rootDir, args, sep }) => {
-  const errorTextEmptyArgs = 'CD operation failed. Need write path';
-  const errorText = 'CD operation failed.';
-  const pathFromArg = replaceQuotes(args[0] || '');
-  const isAbsolutePath = isAbsolute(pathFromArg);
   let newCurrentPathArr = [...currentDirectoryArr];
-  let folderPath;
 
   try {
     if (!args.length) {
-      throw new Error(errorTextEmptyArgs);
+      throw new Error(getEmptyPathMessage('CD'));
     }
 
-    if (isAbsolutePath) {
-      folderPath = validatePath(pathFromArg, rootDir);
-    } else {
-      folderPath = join(...newCurrentPathArr, pathFromArg);
-    }
+    const folderPath = getNeedPathStr(newCurrentPathArr, rootDir, args[0]);
 
     if (!folderPath) {
-      throw new Error(errorText);
+      throw new Error(getFailOperationMessage('CD'));
     }
 
-    const isFileOrFolderExist = await isFileOrFolder(folderPath);
 
-    if (!isFileOrFolderExist || isFileOrFolderExist.data === FILE_VARIANT) {
-      throw new Error(errorText);
+    const isFolderExist = await isFileOrFolderExist(folderPath, FOLDER_VARIANT);
+
+    if (!isFolderExist) {
+      throw new Error(getFailOperationMessage('CD'));
     }
 
     newCurrentPathArr = folderPath.split(sep);

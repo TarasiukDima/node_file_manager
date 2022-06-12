@@ -1,58 +1,5 @@
-import fsPromises from 'fs/promises';
-import os from 'os';
-import { fileURLToPath } from "url";
-import { dirname, sep, parse, join } from "path";
-import { FILE_VARIANT, FOLDER_VARIANT, USER_NAME_ARG } from '../settings/index.js';
 
-export const isExistFileOrFolder = async (folderPath) => {
-  try {
-    await fsPromises.stat(folderPath);
-    return true;
-  } catch {
-    return false;
-  }
-};
-
-export const isFileOrFolder = async (folderPath) => {
-  try {
-    const stats = await fsPromises.stat(folderPath);
-    if (stats.isFile()) {
-      return { data: FILE_VARIANT }
-    } else {
-      return { data: FOLDER_VARIANT }
-    }
-  } catch {
-    return false;
-  }
-};
-
-
-export function getDirname(metaUrl) {
-  const __filename = fileURLToPath(metaUrl);
-  return dirname(__filename);
-}
-
-export function getStartDir(metaUrl) {
-  const startDir = getDirname(metaUrl);
-  const rootDir = parse(startDir).root;
-  return {
-    currentDirectoryArr: startDir.split(sep).slice(0, -1),
-    sep,
-    rootDir
-  };
-}
-
-// export function getPathStringFromArr(arr, sep) {
-//   return arr.join(sep);
-// }
-
-export function getCurrentPathMessage(pathArr) {
-  const pathFolder = pathArr.length > 1
-    ? join(...pathArr)
-    : pathArr[0];
-
-  return `You are currently in ${pathFolder + os.EOL + os.EOL}`;
-}
+import { USER_NAME_ARG } from '../settings/index.js';
 
 export const getUserName = (args) => {
   const argsArray = args.slice(2);
@@ -68,7 +15,6 @@ export const getUserName = (args) => {
   return userName.join(' ');
 };
 
-
 export const replaceQuotes = (str) => {
   let newStr = str.trim();
   const arrQuotes = ['\'', '\"'];
@@ -76,22 +22,27 @@ export const replaceQuotes = (str) => {
   if (arrQuotes.includes(newStr[0])) {
     newStr = newStr.slice(1);
   }
+
   if (arrQuotes.includes(newStr[newStr.length - 1])) {
     newStr = newStr.slice(0, -1);
   }
+
   return newStr;
 };
 
+export const parseArgsString = (input) => {
+  let command = input.split(' ', 1)[0] || '';
+  let argsStr = input.split(' ').slice(1).join(' ');
 
-
-export const validatePath = (str, rootDir) => {
-  const strWithoutDash = str.replaceAll(/\/|\\|\|/g, sep);
-  const arrPath = strWithoutDash.split(sep);
-  const newArrNotEmptyEl = arrPath.filter((pathEl) => pathEl.length);
-
-  if (!newArrNotEmptyEl.length) return;
-  if (!rootDir.startsWith(newArrNotEmptyEl[0])) {
-    newArrNotEmptyEl.unshift(rootDir);
+  const newArr = argsStr.split('\'');
+  if (newArr.length > 1) {
+    return [command, newArr];
   }
-  return newArrNotEmptyEl.join(sep);
+
+  const newArr2 = argsStr.split('\"');
+  if (newArr2.length > 1) {
+    return [command, newArr2];
+  }
+
+  return [command, argsStr.split(' ')];
 };

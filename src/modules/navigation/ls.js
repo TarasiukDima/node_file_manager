@@ -1,10 +1,11 @@
 import fsPromises from 'fs/promises';
-import path from 'path';
-import { getCurrentPathMessage } from '../../utils/helpers.js';
+import { join } from 'path';
+import {
+  getCurrentPathMessage,
+  getFailOperationMessage,
+} from '../../utils/index.js';
 
 export const ls = async (currentDirectoryArr, rootDir) => {
-  const errorText = 'LS operation failed';
-  const currentDirectoryMessage = getCurrentPathMessage(currentDirectoryArr);
   const lastEll = currentDirectoryArr[currentDirectoryArr.length - 1];
   let readFolder;
 
@@ -14,7 +15,7 @@ export const ls = async (currentDirectoryArr, rootDir) => {
   ) {
     readFolder = rootDir;
   } else {
-    readFolder = path.join(...currentDirectoryArr);
+    readFolder = join(...currentDirectoryArr);
   }
 
   try {
@@ -29,11 +30,13 @@ export const ls = async (currentDirectoryArr, rootDir) => {
         console.log(filesNameArray);
       })
       .catch((_) => {
-        throw new Error(errorText);
+        throw new Error(getFailOperationMessage('LS'));
       });
   } catch (error) {
     console.log(error.message);
   }
 
-  process.stdout.write(currentDirectoryMessage);
+  process.stdout.write(
+    getCurrentPathMessage(currentDirectoryArr)
+  );
 };

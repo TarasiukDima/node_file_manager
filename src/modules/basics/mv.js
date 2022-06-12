@@ -2,7 +2,6 @@ import fs from 'fs';
 import fsPromises from 'fs/promises';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { isExistFileOrFolder } from '../../utils/helpers.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 

@@ -2,7 +2,6 @@ import fs from 'fs';
 import fsPromises from 'fs/promises';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { isExistFileOrFolder } from '../../utils/helpers.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -52,19 +51,19 @@ const copyFiles = (filesList, folderPath, newFolderPath) => {
 };
 
 export const cp = async () => {
-  const folderPath = path.join(__dirname, 'files');
-  const newFolderPath = path.join(__dirname, 'files_copy');
-  const errorText = 'FS copy operation failed';
-  const hasFilesFolder = await isExistFileOrFolder(folderPath);
-  const hasCopyFilesFolder = await isExistFileOrFolder(newFolderPath);
+  // const folderPath = path.join(__dirname, 'files');
+  // const newFolderPath = path.join(__dirname, 'files_copy');
+  // const errorText = 'FS copy operation failed';
+  // const hasFilesFolder = await isExistFileOrFolder(folderPath);
+  // const hasCopyFilesFolder = await isExistFileOrFolder(newFolderPath);
 
-  try {
-    if (hasFilesFolder && !hasCopyFilesFolder) {
-      copyDir(folderPath, newFolderPath)
-    } else {
-      throw new Error(errorText);
-    }
-  } catch (error) {
-    console.log(error.message);
-  }
+  // try {
+  //   if (hasFilesFolder && !hasCopyFilesFolder) {
+  //     copyDir(folderPath, newFolderPath)
+  //   } else {
+  //     throw new Error(errorText);
+  //   }
+  // } catch (error) {
+  //   console.log(error.message);
+  // }
 };

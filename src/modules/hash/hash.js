@@ -1,42 +1,18 @@
 import { createReadStream } from 'fs';
-import { isAbsolute, join } from 'path';
 import crypto from 'crypto';
 import {
   getCurrentPathMessage,
-  isFileOrFolder,
-  replaceQuotes,
-  validatePath
-} from '../../utils/helpers.js';
-import { FOLDER_VARIANT } from '../../settings/index.js';
+  getNeedPathStr,
+  getEmptyPathMessage,
+  getFailOperationMessage,
+  getFailOperationEmptyFileMessage,
+  isFileOrFolderExist,
+} from '../../utils/index.js';
+import { FILE_VARIANT } from '../../settings/index.js';
 
-export const hash = async ({ currentDirectoryArr, rootDir, args }) => {
-  const errorText = 'Hash operation failed.';
-  const pathFromArg = replaceQuotes(args[0] || '');
-  const isAbsolutePath = isAbsolute(pathFromArg);
-  let pathHashFile = [...currentDirectoryArr];
-  let folderPath;
-
-  try {
-    if (!args.length) {
-      throw new Error(errorTextEmptyArgs);
-    }
-
-    if (isAbsolutePath) {
-      folderPath = validatePath(pathFromArg, rootDir);
-    } else {
-      folderPath = join(...pathHashFile, pathFromArg);
-    }
-
-    if (!folderPath) {
-      throw new Error(errorText);
-    }
-
-    const isFileOrFolderExist = await isFileOrFolder(folderPath);
-    if (!isFileOrFolderExist || isFileOrFolderExist.data === FOLDER_VARIANT) {
-      throw new Error(errorText);
-    }
-
-    const readFileStream = createReadStream(folderPath, { encoding: 'utf-8' });
+const readStreamOurFile = async (pathFile) => {
+  return await new Promise((res, rej) => {
+    const readFileStream = createReadStream(pathFile, { encoding: 'utf-8' });
     let hash = '';
 
     readFileStream.on('data', (data) => {
@@ -44,12 +20,45 @@ export const hash = async ({ currentDirectoryArr, rootDir, args }) => {
     });
 
     readFileStream.on('end', () => {
-      console.log(hash);
+      res(hash);
     });
 
     readFileStream.on('error', () => {
-      throw new Error(errorText);
+      rej();
     });
+  });
+}
+
+export const hash = async ({ currentDirectoryArr, rootDir, args }) => {
+  let pathHashFileArr = [...currentDirectoryArr];
+
+  try {
+    if (!args.length) {
+      throw new Error(getEmptyPathMessage('Hash'));
+    }
+
+    const fileForHashPathStr = getNeedPathStr(pathHashFileArr, rootDir, args[0]);
+
+    if (!fileForHashPathStr) {
+      throw new Error(getFailOperationMessage('Hash'));
+    }
+
+    const isFileExist = await isFileOrFolderExist(fileForHashPathStr, FILE_VARIANT);
+
+    if ( !isFileExist ) {
+      throw new Error(getFailOperationMessage('Hash'));
+    }
+
+    const hash = await readStreamOurFile(fileForHashPathStr)
+      .catch(() => {
+        throw new Error(getFailOperationMessage('Hash'));
+      });
+
+    if (hash === '') {
+      throw new Error(getFailOperationEmptyFileMessage('Hash'));
+    }
+
+    console.log(hash);
 
   } catch (error) {
     console.log(error.message);
