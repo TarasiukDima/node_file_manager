@@ -7,7 +7,7 @@ const returnChz = (speed) => {
     newSpeed = newSpeed / 10;
   }
 
-  return Math.floor(newSpeed);
+  return Math.round(newSpeed * 10) / 10;
 }
 
 const showCPUS = () => {
@@ -20,7 +20,7 @@ const showCPUS = () => {
   console.table(showCpusInfo);
 }
 
-export const osApp = (currentDirectoryArr, args) => {
+export const osApp = ({currentDirectoryArr, args}) => {
   switch (args[0].trim()) {
     case "--EOL": {
       console.log(JSON.stringify(os.EOL));
