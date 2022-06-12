@@ -2,14 +2,7 @@ import os from 'os';
 import { getCurrentPathMessage } from '../../utils/index.js';
 
 const returnChz = (speed) => {
-  let newSpeed;
-
-  if (speed < 1000) {
-    newSpeed = speed / 10;
-  } else {
-    newSpeed = speed / 1000;
-  }
-
+  let newSpeed = speed / 1000;
   return Math.round(newSpeed * 10) / 10;
 }
 
