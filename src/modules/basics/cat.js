@@ -1,22 +1,60 @@
-import fs from 'fs';
-import path, { dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { createReadStream } from 'fs';
+import { EOL } from 'os';
+import { FILE_VARIANT } from '../../settings/index.js';
+import {
+  getCurrentPathMessage,
+  getFailOperationMessage,
+  getNeedPathStr,
+  isFileOrFolderExist,
+} from '../../utils/index.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const readStreamOurFile = async (pathFile) => {
+  return await new Promise((res, rej) => {
+    const readFileStream = createReadStream(pathFile, { encoding: 'utf-8' });
 
-export const cat = async () => {
-  const filePath = path.join(__dirname, 'files', 'fileToRead.txt');
-  const errorText = 'Read operation failed';
+    readFileStream.on('data', (data) => {
+      process.stdout.write(data);
+    });
 
+    readFileStream.on('end', () => {
+      process.stdout.write(EOL + EOL);
+      res();
+    });
+
+    readFileStream.on('error', () => {
+      rej();
+    });
+  });
+}
+
+export const cat = async ({ currentDirectoryArr, rootDir, args }) => {
   try {
-    const readStream = fs.createReadStream(filePath, { encoding: "utf-8" });
-    readStream.on('data', (chunk) => {
-      process.stdout.write(chunk);
-    });
-    readStream.on('error', () => {
-      throw new Error(errorText);
-    });
+    if (!args.length) {
+      throw new Error(getEmptyPathMessage('Cat'));
+    }
+
+    const pathFileForRead = getNeedPathStr(currentDirectoryArr, rootDir, args[0]);
+
+    if (!pathFileForRead) {
+      throw new Error(getFailOperationMessage('Cat'));
+    }
+
+    const isFileExist = await isFileOrFolderExist(pathFileForRead, FILE_VARIANT);
+
+    if (!isFileExist) {
+      throw new Error(getFailOperationMessage('Cat'));
+    }
+
+
+    await readStreamOurFile(pathFileForRead)
+      .catch(() => {
+        throw new Error(getFailOperationMessage('Cat'));
+      });
   } catch (error) {
     console.log(error.message);
   }
+
+  process.stdout.write(
+    getCurrentPathMessage(currentDirectoryArr)
+  );
 };

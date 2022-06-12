@@ -24,4 +24,5 @@ export {
   getInvalidMessage,
   getFailOperationEmptyFileMessage,
   getFailDecompressExtMessage,
+  getFailExtensionFileMessage,
 } from './messages.js';

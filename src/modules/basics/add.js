@@ -1,26 +1,49 @@
-import fs from 'fs';
-import path, { dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { writeFile } from 'fs/promises';
+import { parse } from 'path';
+import {
+  getCurrentPathMessage,
+  getEmptyPathMessage,
+  getFailExtensionFileMessage,
+  getFailOperationMessage,
+  getNeedPathStr,
+  isFileOrFolderExist,
+} from '../../utils/index.js';
+import { FOLDER_VARIANT } from '../../settings/index.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+export const add = async ({ currentDirectoryArr, rootDir, args }) => {
+  try {
+    if (!args.length) {
+      throw new Error(getEmptyPathMessage('Add'));
+    }
 
-export const add = async () => {
-  const newFilePath = path.join(__dirname, 'files', 'fresh.txt');
-  const content = 'I am fresh and young';
-  const errorText = 'FS create operation failed';
-  // const hasFile = await isExistFileOrFolder(newFilePath);
+    const pathFileForAdd = getNeedPathStr(currentDirectoryArr, rootDir, args[0]);
 
-  // try {
-  //   if (hasFile) {
-  //     throw new Error(errorText);
-  //   } else {
-  //     fs.writeFile(newFilePath, content, 'utf8', (errorWrite) => {
-  //       if (errorWrite) {
-  //         throw new Error(errorText)
-  //       };
-  //     });
-  //   }
-  // } catch (error) {
-  //   console.log(error.message);
-  // }
+    if (!pathFileForAdd) {
+      throw new Error(getFailOperationMessage('Add'));
+    }
+
+    const { dir, ext } = parse(pathFileForAdd);
+
+    if (!ext) {
+      throw new Error(getFailExtensionFileMessage('Add'));
+    }
+
+    const isFileExist = await isFileOrFolderExist(dir, FOLDER_VARIANT);
+
+    if (!isFileExist) {
+      throw new Error(getFailOperationMessage('Add'));
+    }
+
+    await writeFile(pathFileForAdd, '', { flag: 'w', })
+      .catch(() => {
+        throw new Error(errorText);
+      });
+
+  } catch (error) {
+    console.log(error.message);
+  }
+
+  process.stdout.write(
+    getCurrentPathMessage(currentDirectoryArr)
+  );
 };

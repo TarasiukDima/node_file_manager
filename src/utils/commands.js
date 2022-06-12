@@ -18,6 +18,12 @@ export const doCommand = async ({
   });
   let newCurrentPathArr = [...currentDirectoryArr];
 
+  const commonArgsCommand = {
+    currentDirectoryArr: newCurrentPathArr,
+    rootDir,
+    args,
+  }
+
   switch (command) {
     case 'up': {
       newCurrentPathArr = up(newCurrentPathArr, rootDir, 'UP');
@@ -26,7 +32,7 @@ export const doCommand = async ({
     case 'cd': {
       newCurrentPathArr = (args[0] === '..')
         ? up(newCurrentPathArr, rootDir, 'CD')
-        : await cd({ currentDirectoryArr: newCurrentPathArr, rootDir, args, sep });
+        : await cd({ ...commonArgsCommand, sep });
       break;
     }
     case 'ls': {
@@ -34,43 +40,43 @@ export const doCommand = async ({
       break;
     }
     case 'cat': {
-      cat();
+      cat(commonArgsCommand);
       break;
     }
     case 'add': {
-      add();
+      add(commonArgsCommand);
       break;
     }
     case 'rn': {
-      rn();
+      rn(commonArgsCommand);
       break;
     }
     case 'cp': {
-      cp();
+      cp(commonArgsCommand);
       break;
     }
     case 'mv': {
-      mv();
+      mv(commonArgsCommand);
       break;
     }
     case 'rm': {
-      rm();
+      rm(commonArgsCommand);
       break;
     }
     case 'os': {
-      os(newCurrentPathArr, args);
+      os(commonArgsCommand);
       break;
     }
     case 'hash': {
-      hash({ currentDirectoryArr: newCurrentPathArr, rootDir, args });
+      hash(commonArgsCommand);
       break;
     }
     case 'compress': {
-      compress({ currentDirectoryArr: newCurrentPathArr, rootDir, args });
+      compress(commonArgsCommand);
       break;
     }
     case 'decompress': {
-      decompress({ currentDirectoryArr: newCurrentPathArr, rootDir, args });
+      decompress(commonArgsCommand);
       break;
     }
     case 'exit':

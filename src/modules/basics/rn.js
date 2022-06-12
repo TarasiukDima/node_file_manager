@@ -1,23 +1,42 @@
-import fs from 'fs';
-import path, { dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { rename } from 'fs';
+import { FILE_VARIANT } from '../../settings/index.js';
+import {
+  getCurrentPathMessage,
+  getEmptyPathMessage,
+  getFailOperationMessage,
+  getNeedPathStr,
+  isFileOrFolderExist,
+} from '../../utils/index.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+export const rn = async ({ currentDirectoryArr, rootDir, args }) => {
+  try {
+    if (args.length < 2) {
+      throw new Error(getEmptyPathMessage('Rename'));
+    }
 
-export const rn = async () => {
-  // const fileBadName = path.join(__dirname, 'files', 'wrongFilename.txt');
-  // const fileGoodName = path.join(__dirname, 'files', 'properFilename.md');
-  // const errorText = 'FS rename operation failed';
-  // const hasBadFile = await isExistFileOrFolder(fileBadName);
-  // const hasGoodFile = await isExistFileOrFolder(fileGoodName);
+    const pathFileForRename = getNeedPathStr(currentDirectoryArr, rootDir, args[0]);
+    const pathNewFile = getNeedPathStr(currentDirectoryArr, rootDir, args[1]);
 
-  // try {
-  //   if (hasBadFile && !hasGoodFile) {
-  //     fs.rename(fileBadName, fileGoodName, () => { })
-  //   } else {
-  //     throw new Error(errorText);
-  //   }
-  // } catch (error) {
-  //   console.log(error.message);
-  // }
+    if (!pathFileForRename) {
+      throw new Error(getFailOperationMessage('Rename'));
+    }
+
+    const isFileExist = await isFileOrFolderExist(pathFileForRename, FILE_VARIANT);
+
+    if (!isFileExist) {
+      throw new Error(getFailOperationMessage('Rename'));
+    }
+
+    rename(pathFileForRename, pathNewFile, (err) => {
+      if (err) {
+        throw new Error(getFailOperationMessage('Rename'));
+      }
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+
+  process.stdout.write(
+    getCurrentPathMessage(currentDirectoryArr)
+  );
 };

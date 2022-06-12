@@ -37,3 +37,7 @@ export const getFailDecompressExtMessage = () => {
   return 'Decompress operation failed. Only files with br extension.';
 }
 
+export const getFailExtensionFileMessage = () => {
+  return 'Add operation failed. Files must contain extension.';
+}
+
